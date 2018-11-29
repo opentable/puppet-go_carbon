@@ -15,7 +15,7 @@ class go_carbon::install inherits go_carbon {
     'Debian': {
       if $go_carbon::download_package {
         exec { 'download package from release':
-          command => "/usr/bin/curl -s -o /tmp/go-carbon_${go_carbon::version}_amd64.deb ${go_carbon::download_deb_url}",
+          command => "/usr/bin/curl -s -L -o /tmp/go-carbon_${go_carbon::version}_amd64.deb ${go_carbon::download_deb_url}",
           cwd     => '/tmp',
           unless  => "/usr/bin/apt show go-carbon=${go_carbon::version}",
         } ~>
