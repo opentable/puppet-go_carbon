@@ -5,6 +5,7 @@ class go_carbon(
   $ensure                   = 'present',
   $package_name             = $go_carbon::params::package_name,
   $version                  = $go_carbon::params::version,
+  $download_deb_url         = "https://github.com/lomik/go-carbon/releases/download/v${version}/go-carbon_${version}_amd64.deb",
   $executable               = $go_carbon::params::executable,
   $systemd_service_folder   = $go_carbon::params::systemd_service_folder,
   $config_dir               = $go_carbon::params::config_dir,
