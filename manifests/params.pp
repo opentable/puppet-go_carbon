@@ -35,10 +35,6 @@ class go_carbon::params {
   # Run as user. Works only in daemon mode
   $user                               = 'gocarbon'
   $group                              = 'gocarbon'
-  # If logfile is empty use stderr
-  $log_file                           = '/var/log/go-carbon/go-carbon.log'
-  # Logging error level. Valid values: "debug", "info", "warn", "warning", "error"
-  $log_level                          = 'info'
   # Prefix for store all internal go-carbon graphs. Supported macroses: {host}
   $internal_graph_prefix              = 'carbon.agents.{host}.'
   # Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
@@ -46,7 +42,7 @@ class go_carbon::params {
   # Increase for configuration with multi persisters
   $max_cpu                            = 1
 
-  $whisper_data_dir                   = undef
+  $whisper_data_dir                   = '/var/lib/graphite/whisper'
   # http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf. Required
   $whisper_schemas_file               = "${config_dir}/storage-schemas.conf"
   # http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-aggregation-conf. Optional
@@ -55,33 +51,43 @@ class go_carbon::params {
   $whisper_workers                    = 1
   # Limits the number of whisper update_many() calls per second. 0 - no limit
   $whisper_max_updates_per_second     = 0
+  $whisper_max_creates_per_second     = 500
   $whisper_enabled                    = true
 
   # Limit of in-memory stored points (not metrics)
   $cache_max_size                     = 1000000
   # Capacity of queue between receivers and cache
-  $cache_input_buffer                 = 51200
+  # Strategy to persist metrics. Values: "max","sorted","noop"
+  #   "max" - write metrics with most unwritten datapoints first
+  #   "sorted" - sort by timestamp of first unwritten datapoint.
+  #   "noop" - pick metrics to write in unspecified order,
+  #            requires least CPU and improves cache responsiveness
+  $cache_write_strategy               = "max"
 
-  $udp_listen                         = '0.0.0.0:2003'
+  $udp_listen                         = ':2003'
   # Enable optional logging of incomplete messages (chunked by MTU)
   $udp_log_incomplete                 = false
   $udp_enabled                        = true
+  # Optional internal queue between receiver and cache
+  $udp_buffer_size                    = 0
 
-  $tcp_listen                         = '0.0.0.0:2003'
+  $tcp_listen                         = ':2003'
   $tcp_enabled                        = true
+  # Optional internal queue between receiver and cache
+  $tcp_buffer_size                    = 0
 
-  $pickle_listen                      = '0.0.0.0:2004'
+  $pickle_listen                      = ':2004'
   # Limit message size for prevent memory overflow
   $pickle_max_message_size            = 67108864
   $pickle_enabled                     = true
+  # Optional internal queue between receiver and cache
+  $pickle_buffer_size                 = 0
 
 
   $carbonlink_listen                  = '127.0.0.1:7002'
   $carbonlink_enabled                 = true
   # Close inactive connections after "read-timeout"
   $carbonlink_read_timeout            = '30s'
-  # Return empty result if cache not reply
-  $carbonlink_query_timeout           = '100ms'
 
   $pprof_listen                       = '127.0.0.1:7007'
   $pprof_enabled                      = false
@@ -90,4 +96,8 @@ class go_carbon::params {
     'RedHat' => '/sbin/nologin',
     'Debian' => '/usr/sbin/nologin',
   }
+
+  $log_file                           = '/var/log/go-carbon/go-carbon.log'
+  # Logging error level. Valid values: "debug", "info", "warn", "warning", "error"
+  $log_level                          = 'info'
 }

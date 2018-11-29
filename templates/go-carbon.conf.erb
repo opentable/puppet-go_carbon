@@ -3,18 +3,17 @@
 [common]
 # Run as user. Works only in daemon mode
 user = "<%= @user %>"
-# If logfile is empty use stderr
-logfile = "<%= @log_file %>"
-# Logging error level. Valid values: "debug", "info", "warn", "warning", "error"
-log-level = "<%= @log_level %>"
 # Prefix for store all internal go-carbon graphs. Supported macroses: {host}
 graph-prefix = "<%= @internal_graph_prefix %>"
+# Endpoint for store internal carbon metrics. Valid values: "" or "local", "tcp://host:port", "udp://host:port"
+metric-endpoint = "local"
 # Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
 metric-interval = "<%= @internal_metrics_interval %>"
 # Increase for configuration with multi persisters
 max-cpu = <%= @max_cpu %>
 
 [whisper]
+enabled = <%= @whisper_enabled %>
 data-dir = "<%= @whisper_data_dir %>"
 # http://graphite.readthedocs.org/en/latest/config-carbon.html#storage-schemas-conf. Required
 schemas-file = "<%= @whisper_schemas_file %>"
@@ -24,38 +23,164 @@ aggregation-file = "<%= @whisper_aggregation_file %>"
 workers = <%= @whisper_workers %>
 # Limits the number of whisper update_many() calls per second. 0 - no limit
 max-updates-per-second = <%= @whisper_max_updates_per_second %>
-enabled = <%= @whisper_enabled %>
+# Softly limits the number of whsiper files that get created each second. 0 - no limit
+max-creates-per-second = <%= @whisper_max_creates_per_second %>
+# Make max-creates-per-second a hard limit. Extra new metrics are dropped. A hard throttle of 0 drops all new metrics.
+hard-max-creates-per-second = false
+# Sparse file creation
+sparse-create = false
+# use flock on every file call (ensures consistency if there are concurrent read/writes to the same file)
+flock = false
+enabled = true
+# Use hashed filenames for tagged metrics instead of human readable
+# https://github.com/lomik/go-carbon/pull/225
+hash-filenames = true
 
 [cache]
 # Limit of in-memory stored points (not metrics)
 max-size = <%= @cache_max_size %>
 # Capacity of queue between receivers and cache
-input-buffer = <%= @cache_input_buffer %>
+# Strategy to persist metrics. Values: "max","sorted","noop"
+#   "max" - write metrics with most unwritten datapoints first
+#   "sorted" - sort by timestamp of first unwritten datapoint.
+#   "noop" - pick metrics to write in unspecified order,
+#            requires least CPU and improves cache responsiveness
+write-strategy = <%= @cache_write_strategy %>
 
 [udp]
 listen = "<%= @udp_listen %>"
 enabled = <%= @udp_enabled %>
 # Enable optional logging of incomplete messages (chunked by MTU)
 log-incomplete = <%= @udp_log_incomplete  %>
+# Optional internal queue between receiver and cache
+buffer-size = <%= @udp_buffer_size %>
 
 [tcp]
 listen = "<%= @tcp_listen %>"
 enabled = <%= @tcp_enabled %>
+# Optional internal queue between receiver and cache
+buffer-size = <%= @tcp_buffer_size %>
 
 [pickle]
 listen = "<%= @pickle_listen %>"
 enabled = <%= @pickle_enabled %>
 # Limit message size for prevent memory overflow
 max-message-size = <%= @pickle_max_message_size %>
+# Optional internal queue between receiver and cache
+buffer-size = <%= @pickle_buffer_size %>
 
 [carbonlink]
 listen = "<%= @carbonlink_listen %>"
 enabled = <%= @carbonlink_enabled %>
 # Close inactive connections after "read-timeout"
 read-timeout = "<%= @carbonlink_read_timeout %>"
-# Return empty result if cache not reply
-query-timeout = "<%= @carbonlink_query_timeout %>"
+
+# grpc api
+# protocol: https://github.com/lomik/go-carbon/blob/master/helper/carbonpb/carbon.proto
+# samples: https://github.com/lomik/go-carbon/tree/master/api/sample
+[grpc]
+listen = "127.0.0.1:7003"
+enabled = true
+
+# http://graphite.readthedocs.io/en/latest/tags.html
+[tags]
+enabled = false
+# TagDB url. It should support /tags/tagMultiSeries endpoint
+tagdb-url = "http://127.0.0.1:8000"
+tagdb-chunk-size = 32
+tagdb-update-interval = 100
+# Directory for send queue (based on leveldb)
+local-dir = "/var/lib/graphite/tagging/"
+# POST timeout
+tagdb-timeout = "1s"
+
+[carbonserver]
+# Please NOTE: carbonserver is not intended to fully replace graphite-web
+# It acts as a "REMOTE_STORAGE" for graphite-web or carbonzipper/carbonapi
+listen = "127.0.0.1:8080"
+# Carbonserver support is still experimental and may contain bugs
+# Or be incompatible with github.com/grobian/carbonserver
+enabled = false
+# Buckets to track response times
+buckets = 10
+# carbonserver-specific metrics will be sent as counters
+# For compatibility with grobian/carbonserver
+metrics-as-counters = false
+# Read and Write timeouts for HTTP server
+read-timeout = "60s"
+write-timeout = "60s"
+# Enable /render cache, it will cache the result for 1 minute
+query-cache-enabled = true
+# 0 for unlimited
+query-cache-size-mb = 0
+# Enable /metrics/find cache, it will cache the result for 5 minutes
+find-cache-enabled = true
+# Control trigram index
+#  This index is used to speed-up /find requests
+#  However, it will lead to increased memory consumption
+#  Estimated memory consumption is approx. 500 bytes per each metric on disk
+#  Another drawback is that it will recreate index every scan-frequency interval
+#  All new/deleted metrics will still be searchable until index is recreated
+trigram-index = true
+# carbonserver keeps track of all available whisper files
+# in memory. This determines how often it will check FS
+# for new or deleted metrics.
+scan-frequency = "5m0s"
+# Maximum amount of globs in a single metric in index
+# This value is used to speed-up /find requests with
+# a lot of globs, but will lead to increased memory consumption
+max-globs = 100
+# Fail if amount of globs more than max-globs
+fail-on-max-globs = false
+# graphite-web-10-mode
+# Use Graphite-web 1.0 native structs for pickle response
+# This mode will break compatibility with graphite-web 0.9.x
+# If false, carbonserver won't send graphite-web 1.0 specific structs
+# That might degrade performance of the cluster
+# But will be compatible with both graphite-web 1.0 and 0.9.x
+graphite-web-10-strict-mode = true
+# Allows to keep track for "last time readed" between restarts, leave empty to disable
+internal-stats-dir = ""
+# Calculate /render request time percentiles for the bucket, '95' means calculate 95th Percentile. To disable this feature, leave the list blank
+stats-percentiles = [99, 98, 95, 75, 50]
+
+[dump]
+# Enable dump/restore function on USR2 signal
+enabled = false
+# Directory for store dump data. Should be writeable for carbon
+path = "/var/lib/graphite/dump/"
+# Restore speed. 0 - unlimited
+restore-per-second = 0
 
 [pprof]
 listen = "<%= @pprof_listen %>"
 enabled = <%= @pprof_enabled %>
+
+# Default logger
+[[logging]]
+# logger name
+# available loggers:
+# * "" - default logger for all messages without configured special logger
+# @TODO
+logger = ""
+# Log output: filename, "stderr", "stdout", "none", "" (same as "stderr")
+file = <%= @log_file %>
+# Log level: "debug", "info", "warn", "error", "dpanic", "panic", and "fatal"
+level = <%= @log_level %>
+# Log format: "json", "console", "mixed"
+encoding = "mixed"
+# Log time format: "millis", "nanos", "epoch", "iso8601"
+encoding-time = "iso8601"
+# Log duration format: "seconds", "nanos", "string"
+encoding-duration = "seconds"
+
+# You can define multiply loggers:
+
+# Copy errors to stderr for systemd
+# [[logging]]
+# logger = ""
+# file = "stderr"
+# level = "error"
+# encoding = "mixed"
+# encoding-time = "iso8601"
+# encoding-duration = "seconds"

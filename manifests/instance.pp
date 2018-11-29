@@ -31,7 +31,6 @@ define go_carbon::instance(
   $carbonlink_listen               = $go_carbon::params::carbonlink_listen,
   $carbonlink_enabled              = $go_carbon::params::carbonlink_enabled,
   $carbonlink_read_timeout         = $go_carbon::params::carbonlink_read_timeout,
-  $carbonlink_query_timeout        = $go_carbon::params::carbonlink_query_timeout,
   $pprof_listen                    = $go_carbon::params::pprof_listen,
   $pprof_enabled                   = $go_carbon::params::pprof_enabled,
 )
@@ -75,7 +74,6 @@ define go_carbon::instance(
 
   validate_bool($carbonlink_enabled)
   validate_string($carbonlink_read_timeout)
-  validate_string($carbonlink_query_timeout)
   
   validate_re($pprof_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
     "Invalid pprof listen ${pprof_listen}. Must be {ip}:{port} or just :{port}")
