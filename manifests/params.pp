@@ -62,7 +62,7 @@ class go_carbon::params {
   #   "sorted" - sort by timestamp of first unwritten datapoint.
   #   "noop" - pick metrics to write in unspecified order,
   #            requires least CPU and improves cache responsiveness
-  $cache_write_strategy               = "max"
+  $cache_write_strategy               = 'max'
 
   $udp_listen                         = ':2003'
   # Enable optional logging of incomplete messages (chunked by MTU)

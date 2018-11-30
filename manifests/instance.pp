@@ -3,8 +3,10 @@
 #
 define go_carbon::instance(
   $service_name                    = $title,
+  $default_service                 = false,
   $ensure                          = 'present',
   $log_file                        = $go_carbon::params::log_file,
+  $group                           = $go_carbon::params::group,
   $log_level                       = $go_carbon::params::log_level,
   $service_enable                  = $go_carbon::params::service_enable,
   $service_ensure                  = $go_carbon::params::service_ensure,
@@ -19,15 +21,18 @@ define go_carbon::instance(
   $whisper_max_updates_per_second  = $go_carbon::params::whisper_max_updates_per_second,
   $whisper_enabled                 = $go_carbon::params::whisper_enabled,
   $cache_max_size                  = $go_carbon::params::cache_max_size,
-  $cache_write_stategy             = $go_carbon::params::cache_write_strategy,
+  $cache_write_strategy            = $go_carbon::params::cache_write_strategy,
   $udp_listen                      = $go_carbon::params::udp_listen,
   $udp_log_incomplete              = $go_carbon::params::udp_log_incomplete,
   $udp_enabled                     = $go_carbon::params::udp_enabled,
+  $udp_buffer_size                 = $go_carbon::params::udp_buffer_size,
   $tcp_listen                      = $go_carbon::params::tcp_listen,
   $tcp_enabled                     = $go_carbon::params::tcp_enabled,
+  $tcp_buffer_size                 = $go_carbon::params::tcp_buffer_size,
   $pickle_listen                   = $go_carbon::params::pickle_listen,
   $pickle_max_message_size         = $go_carbon::params::pickle_max_message_size,
   $pickle_enabled                  = $go_carbon::params::pickle_enabled,
+  $pickle_buffer_size              = $go_carbon::params::pickle_buffer_size,
   $carbonlink_listen               = $go_carbon::params::carbonlink_listen,
   $carbonlink_enabled              = $go_carbon::params::carbonlink_enabled,
   $carbonlink_read_timeout         = $go_carbon::params::carbonlink_read_timeout,
@@ -82,6 +87,11 @@ define go_carbon::instance(
   validate_absolute_path($whisper_schemas_file)
   validate_absolute_path($whisper_aggregation_file)
 
+  if $default_service {
+    $service_title = 'go-carbon'
+  } else {
+    $service_title = "go-carbon_${service_name}"
+  }
 
   # Put the configuration files
   $executable = $go_carbon::executable
@@ -89,12 +99,12 @@ define go_carbon::instance(
   $user       = $go_carbon::user
 
   file {
-    "${go_carbon::config_dir}/${service_name}.conf":
+    "${go_carbon::config_dir}/${service_title}.conf":
       ensure  => $ensure,
       content => template("${module_name}/go-carbon.conf.erb")
   } ->
-  go_carbon::service { $service_name: }
+  go_carbon::service { $service_title: }
 
   Class[$module_name] ->
-  File["${go_carbon::config_dir}/${service_name}.conf"]
+  File["${go_carbon::config_dir}/${service_title}.conf"]
 }
