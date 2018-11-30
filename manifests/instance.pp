@@ -38,6 +38,7 @@ define go_carbon::instance(
   $carbonlink_read_timeout         = $go_carbon::params::carbonlink_read_timeout,
   $pprof_listen                    = $go_carbon::params::pprof_listen,
   $pprof_enabled                   = $go_carbon::params::pprof_enabled,
+  $grpc_enabled                    = $go_carbon::params::grpc_enabled,
 )
 {
   include go_carbon

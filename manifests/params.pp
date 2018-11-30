@@ -56,7 +56,6 @@ class go_carbon::params {
 
   # Limit of in-memory stored points (not metrics)
   $cache_max_size                     = 1000000
-  # Capacity of queue between receivers and cache
   # Strategy to persist metrics. Values: "max","sorted","noop"
   #   "max" - write metrics with most unwritten datapoints first
   #   "sorted" - sort by timestamp of first unwritten datapoint.
@@ -83,6 +82,7 @@ class go_carbon::params {
   # Optional internal queue between receiver and cache
   $pickle_buffer_size                 = 0
 
+  $grpc_enabled                       = true
 
   $carbonlink_listen                  = '127.0.0.1:7002'
   $carbonlink_enabled                 = true

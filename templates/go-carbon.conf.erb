@@ -38,7 +38,6 @@ hash-filenames = true
 [cache]
 # Limit of in-memory stored points (not metrics)
 max-size = <%= @cache_max_size %>
-# Capacity of queue between receivers and cache
 # Strategy to persist metrics. Values: "max","sorted","noop"
 #   "max" - write metrics with most unwritten datapoints first
 #   "sorted" - sort by timestamp of first unwritten datapoint.
@@ -79,7 +78,7 @@ read-timeout = "<%= @carbonlink_read_timeout %>"
 # samples: https://github.com/lomik/go-carbon/tree/master/api/sample
 [grpc]
 listen = "127.0.0.1:7003"
-enabled = true
+enabled = <%= @grpc_enabled %> 
 
 # http://graphite.readthedocs.io/en/latest/tags.html
 [tags]
