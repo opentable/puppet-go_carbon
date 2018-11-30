@@ -19,7 +19,7 @@ define go_carbon::instance(
   $whisper_max_updates_per_second  = $go_carbon::params::whisper_max_updates_per_second,
   $whisper_enabled                 = $go_carbon::params::whisper_enabled,
   $cache_max_size                  = $go_carbon::params::cache_max_size,
-  $cache_input_buffer              = $go_carbon::params::cache_input_buffer,
+  $cache_write_stategy             = $go_carbon::params::cache_write_strategy,
   $udp_listen                      = $go_carbon::params::udp_listen,
   $udp_log_incomplete              = $go_carbon::params::udp_log_incomplete,
   $udp_enabled                     = $go_carbon::params::udp_enabled,
@@ -48,7 +48,7 @@ define go_carbon::instance(
   validate_integer($whisper_max_updates_per_second)
   validate_bool($whisper_enabled)
   validate_integer($cache_max_size)
-  validate_integer($cache_input_buffer)
+  validate_string($cache_write_strategy)
   validate_integer($go_maxprocs)
   validate_bool($service_enable)
 
