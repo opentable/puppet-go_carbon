@@ -15,10 +15,6 @@ class go_carbon(
   $storage_schemas                = $go_carbon::params::storage_schemas,
   $download_package               = $go_carbon::params::download_package,
   $shell                          = $go_carbon::params::shell,
-  $max_cpu                        = $go_carbon::params::max_cpu,
-  $whisper_workers                = $go_carbon::params::whisper_workers,
-  $whisper_max_updates_per_second = $go_carbon::params::whisper_max_updates_per_second,
-  $whisper_max_creates_per_second = $go_carbon::params::whisper_max_creates_per_second	
 ) inherits go_carbon::params {
 
   validate_re($::osfamily, '^(RedHat|Debian)', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04')
