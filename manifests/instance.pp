@@ -19,6 +19,7 @@ define go_carbon::instance(
   $whisper_aggregation_file        = $go_carbon::params::whisper_aggregation_file,
   $whisper_workers                 = $go_carbon::params::whisper_workers,
   $whisper_max_updates_per_second  = $go_carbon::params::whisper_max_updates_per_second,
+  $whisper_max_creates_per_second  = $go_carbon::params::whisper_max_creates_per_second,
   $whisper_enabled                 = $go_carbon::params::whisper_enabled,
   $cache_max_size                  = $go_carbon::params::cache_max_size,
   $cache_write_strategy            = $go_carbon::params::cache_write_strategy,
