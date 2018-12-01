@@ -4,7 +4,7 @@ Documentation=https://github.com/lomik/go-carbon
 After=network.target
 
 [Service]
-ExecStart=<%= @executable %> -config <%= @config_dir %>/<%= @service_name %>.conf
+ExecStart=<%= scope['::go_carbon::executable'] %> -config <%= scope['::go_carbon::config_dir'] %>/<%= @service_name %>.conf
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=USR2
 Restart=on-failure
@@ -12,8 +12,8 @@ Restart=on-failure
 TimeoutStopSec=600
 LimitNOFILE=55555
 LimitMEMLOCK=infinity
-User=<%= @user %>
-Group=<%= @group %>
+User=<%= scope['::go_carbon::user'] %>
+Group=<%= scope['::go_carbon::group'] %>
 
 [Install]
 WantedBy=multi-user.target
