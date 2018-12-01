@@ -6,7 +6,6 @@ define go_carbon::instance(
   $default_service                 = false,
   $ensure                          = 'present',
   $log_file                        = $go_carbon::params::log_file,
-  $group                           = $go_carbon::params::group,
   $log_level                       = $go_carbon::params::log_level,
   $service_enable                  = $go_carbon::params::service_enable,
   $service_ensure                  = $go_carbon::params::service_ensure,
