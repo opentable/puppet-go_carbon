@@ -36,6 +36,8 @@ define go_carbon::instance(
   $carbonlink_listen               = $go_carbon::params::carbonlink_listen,
   $carbonlink_enabled              = $go_carbon::params::carbonlink_enabled,
   $carbonlink_read_timeout         = $go_carbon::params::carbonlink_read_timeout,
+  $carbonserver_enabled            = $go_carbon::params::carbonserver_enabled,
+  $carbonserver_listen             = $go_carbon::params::carbonserver_listen,
   $pprof_listen                    = $go_carbon::params::pprof_listen,
   $pprof_enabled                   = $go_carbon::params::pprof_enabled,
   $grpc_enabled                    = $go_carbon::params::grpc_enabled,
@@ -102,7 +104,9 @@ define go_carbon::instance(
   file {
     "${go_carbon::config_dir}/${service_title}.conf":
       ensure  => $ensure,
-      content => template("${module_name}/go-carbon.conf.erb")
+      content => template("${module_name}/go-carbon.conf.erb"),
+      group   => $user,
+      mode    => '0650',
   } ->
   go_carbon::service { $service_title: }
 
