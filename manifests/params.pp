@@ -89,6 +89,9 @@ class go_carbon::params {
   # Close inactive connections after "read-timeout"
   $carbonlink_read_timeout            = '30s'
 
+  $carbonserver_enabled               = false
+  $carbonserver_listen                = '127.0.0.1:8080'
+
   $pprof_listen                       = '127.0.0.1:7007'
   $pprof_enabled                      = false
   $download_package                   = false
