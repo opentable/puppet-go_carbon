@@ -92,6 +92,9 @@ class go_carbon::params {
   $carbonserver_enabled               = false
   $carbonserver_listen                = '127.0.0.1:8080'
 
+  $dump_dir                           = '/tmp'
+  $dump_enabled                       = false
+
   $pprof_listen                       = '127.0.0.1:7007'
   $pprof_enabled                      = false
   $download_package                   = false
