@@ -109,6 +109,7 @@ define go_carbon::instance(
       content => template("${module_name}/go-carbon.conf.erb"),
       group   => $user,
       mode    => '0650',
+      require => File[$go_carbon::config_dir],
   } ->
   go_carbon::service { $service_title: }
 
