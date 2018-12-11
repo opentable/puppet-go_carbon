@@ -144,9 +144,9 @@ stats-percentiles = [99, 98, 95, 75, 50]
 
 [dump]
 # Enable dump/restore function on USR2 signal
-enabled = false
+enabled = <%= @dump_enabled %>
 # Directory for store dump data. Should be writeable for carbon
-path = "/var/lib/graphite/dump/"
+path = "<%= @dump_dir %>"
 # Restore speed. 0 - unlimited
 restore-per-second = 0
 
