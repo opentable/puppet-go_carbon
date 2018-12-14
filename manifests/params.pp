@@ -35,6 +35,8 @@ class go_carbon::params {
   # Run as user. Works only in daemon mode
   $user                               = 'gocarbon'
   $group                              = 'gocarbon'
+  # Ignore OS validations
+  $force_install                      = false
   # Prefix for store all internal go-carbon graphs. Supported macroses: {host}
   $internal_graph_prefix              = 'carbon.agents.{host}.'
   # Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL
@@ -91,6 +93,7 @@ class go_carbon::params {
 
   $carbonserver_enabled               = false
   $carbonserver_listen                = '127.0.0.1:8080'
+  $carbonserver_trigram_enabled       = true
 
   $dump_dir                           = '/tmp'
   $dump_enabled                       = false
