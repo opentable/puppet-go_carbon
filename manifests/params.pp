@@ -36,8 +36,6 @@ class go_carbon::params {
   $user                               = 'gocarbon'
   $group                              = 'gocarbon'
   $manage_user                        = true
-  # Ignore OS validations
-  $force_install                      = false
   # Prefix for store all internal go-carbon graphs. Supported macroses: {host}
   $internal_graph_prefix              = 'carbon.agents.{host}.'
   # Interval of storing internal metrics. Like CARBON_METRIC_INTERVAL

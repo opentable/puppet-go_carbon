@@ -47,29 +47,28 @@ define go_carbon::service(
       }
     }
 
-    default: {
-      if $go_carbon::force_install {
-        file { "${::go_carbon::systemd_service_folder}/${service_name}.service":
-          ensure  => $go_carbon::ensure,
-          mode    => '0644',
-          owner   => 'root',
-          group   => 'root',
-          content => template("${module_name}/systemd.go-carbon.conf.erb")
-        } ~>
-        Exec['systemctl-daemon-reload']
-        service { "${service_name}":
-          ensure    => $service_ensure,
-          enable    => $service_enable,
-          provider  => systemd,
-          subscribe =>
-          [
-            File["${go_carbon::systemd_service_folder}/${service_name}.service"],
-            File["${go_carbon::config_dir}/${service_name}.conf"]
-          ]
-        }
-      } else {
-        fail("Unable to install a go-carbon service on OS version ${::operatingsystemmajrelease}.")
+    '14.04': {
+      file { "/etc/init.d/${service_name}":
+        ensure  => $go_carbon::ensure,
+        mode    => '0744',
+        owner   => 'root',
+        group   => 'root',
+        content => template("${module_name}/init.go-carbon.erb")
+      } ~>
+
+      service { "${service_name}":
+        ensure    => $service_ensure,
+        enable    => $service_enable,
+        subscribe =>
+        [
+          File["/etc/init.d/${service_name}"],
+          File["${go_carbon::config_dir}/${service_name}.conf"]
+        ]
       }
+    }
+
+    default: {
+      fail("Unable to install a go-carbon service on OS version ${::operatingsystemmajrelease}.")
     }
   }
 }

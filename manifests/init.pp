@@ -16,13 +16,10 @@ class go_carbon(
   $storage_schemas                = $go_carbon::params::storage_schemas,
   $download_package               = $go_carbon::params::download_package,
   $shell                          = $go_carbon::params::shell,
-  $force_install                  = $go_carbon::params::force_install,
 ) inherits go_carbon::params {
 
-  unless $force_install {
-    validate_re($::osfamily, '^(RedHat|Debian)', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04')
-    validate_re($::operatingsystemmajrelease, '^[67]|16.04$', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04')
-  }
+  validate_re($::osfamily, '^(RedHat|Debian)', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04')
+  validate_re($::operatingsystemmajrelease, '^[67]|16.04|14.04$', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04')
 
   validate_string($package_name)
   validate_string($version)
