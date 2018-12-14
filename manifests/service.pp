@@ -47,6 +47,26 @@ define go_carbon::service(
       }
     }
 
+    '14.04': {
+      file { "/etc/init.d/${service_name}":
+        ensure  => $go_carbon::ensure,
+        mode    => '0744',
+        owner   => 'root',
+        group   => 'root',
+        content => template("${module_name}/init.go-carbon.erb")
+      } ~>
+
+      service { "${service_name}":
+        ensure    => $service_ensure,
+        enable    => $service_enable,
+        subscribe =>
+        [
+          File["/etc/init.d/${service_name}"],
+          File["${go_carbon::config_dir}/${service_name}.conf"]
+        ]
+      }
+    }
+
     default: {
       fail("Unable to install a go-carbon service on OS version ${::operatingsystemmajrelease}.")
     }
