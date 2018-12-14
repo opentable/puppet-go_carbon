@@ -91,6 +91,7 @@ class go_carbon::params {
 
   $carbonserver_enabled               = false
   $carbonserver_listen                = '127.0.0.1:8080'
+  $carbonserver_trigram_enabled       = true
 
   $dump_dir                           = '/tmp'
   $dump_enabled                       = false
