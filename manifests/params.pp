@@ -35,6 +35,7 @@ class go_carbon::params {
   # Run as user. Works only in daemon mode
   $user                               = 'gocarbon'
   $group                              = 'gocarbon'
+  $manage_user                        = true
   # Ignore OS validations
   $force_install                      = false
   # Prefix for store all internal go-carbon graphs. Supported macroses: {host}

@@ -11,6 +11,7 @@ class go_carbon(
   $config_dir                     = $go_carbon::params::config_dir,
   $user                           = $go_carbon::params::user,
   $group                          = $go_carbon::params::group,
+  $manage_user                    = $go_carbon::params::manage_user,
   $storage_aggregations           = $go_carbon::params::storage_aggregations,
   $storage_schemas                = $go_carbon::params::storage_schemas,
   $download_package               = $go_carbon::params::download_package,

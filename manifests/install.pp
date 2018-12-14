@@ -1,15 +1,19 @@
 # == Class: go_carbon::install
 # == Description: Creates the user/group, installs the package and creates the config dir.
 class go_carbon::install inherits go_carbon {
-  group { $go_carbon::group:
-    ensure => $go_carbon::ensure,
+
+  if $go_carbon::manage_user {
+    group { $go_carbon::group:
+      ensure => $go_carbon::ensure,
+    }
+
+    user { $go_carbon::user:
+      ensure => $go_carbon::ensure,
+      gid    => $go_carbon::group,
+      shell  => $go_carbon::shell,
+    }
   }
 
-  user { $go_carbon::user:
-    ensure => $go_carbon::ensure,
-    gid    => $go_carbon::group,
-    shell  => $go_carbon::shell,
-  }
 
   case $::osfamily {
     'Debian': {
