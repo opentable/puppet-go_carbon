@@ -5,6 +5,17 @@ define go_carbon::service(
   $service_ensure = 'running',
   $service_enable = true)
 {
+
+  exec { "${service_name}-service-reload":
+    path        => '/usr/sbin',
+    command     => "service ${service_name} reload",
+    subscribe   => [
+      File[$go_carbon::whisper_schemas_file],
+      File[$go_carbon::whisper_aggregation_file]
+    ]
+    refreshonly => true,
+  }
+
   case $::operatingsystemmajrelease {
     '6': {
       # Put the upstart config file
