@@ -7,7 +7,7 @@ define go_carbon::service(
 {
 
   exec { "${service_name}-service-reload":
-    path        => '/usr/sbin',
+    path        => ['/bin','/usr/bin','/usr/sbin/'],
     command     => "service ${service_name} reload",
     subscribe   => [
       File[$go_carbon::whisper_schemas_file],
