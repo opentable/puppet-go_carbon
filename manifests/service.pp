@@ -12,7 +12,7 @@ define go_carbon::service(
     subscribe   => [
       File[$go_carbon::whisper_schemas_file],
       File[$go_carbon::whisper_aggregation_file]
-    ]
+    ],
     refreshonly => true,
     onlyif      => "/usr/bin/go-carbon -config ${go_carbon::config_dir}/${service_name}.conf -check-config=true"
   }
