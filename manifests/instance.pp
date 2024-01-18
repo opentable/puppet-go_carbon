@@ -43,6 +43,7 @@ define go_carbon::instance(
   $dump_dir                        = $go_carbon::params::dump_dir,
   $pprof_listen                    = $go_carbon::params::pprof_listen,
   $pprof_enabled                   = $go_carbon::params::pprof_enabled,
+  $grpc_listen                     = $go_carbon::params::grpc_listen,
   $grpc_enabled                    = $go_carbon::params::grpc_enabled,
 )
 {

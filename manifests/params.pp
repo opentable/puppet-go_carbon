@@ -83,6 +83,7 @@ class go_carbon::params {
   # Optional internal queue between receiver and cache
   $pickle_buffer_size                 = 0
 
+  $grpc_listen                        = ':7003'
   $grpc_enabled                       = true
 
   $carbonlink_listen                  = '127.0.0.1:7002'
