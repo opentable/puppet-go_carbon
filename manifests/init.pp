@@ -18,18 +18,24 @@ class go_carbon(
   $shell                          = $go_carbon::params::shell,
 ) inherits go_carbon::params {
 
-  validate_re($::osfamily, '^(RedHat|Debian)', 'This module is only supported on RHEL/CentOS or Ubuntu')
-  validate_re($::operatingsystemmajrelease, '^[67]|16.04|14.04|20.04$', 'This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04/20.04')
+  # Ensure OS compatibility using assert_type instead of validate_re
+  if $::osfamily !~ /^(RedHat|Debian)$/ {
+    fail("This module is only supported on RHEL/CentOS or Ubuntu")
+  }
 
-  validate_string($package_name)
-  validate_string($version)
-  validate_absolute_path($executable)
-  validate_absolute_path($config_dir)
-  validate_absolute_path($systemd_service_folder)
-  validate_string($user)
-  validate_string($group)
-  validate_array($storage_aggregations)
-  validate_array($storage_schemas)
+  if $::operatingsystemmajrelease !~ /^(6|7|16.04|20.04|24.04)$/ {
+    fail("Invalid OS Version '${::operatingsystemmajrelease}'. This module is only supported on RHEL/CentOS 6/7 or Ubuntu 16.04/20.04")
+  }
+
+  assert_type(String, $package_name)
+  assert_type(String, $version)
+  assert_type(Stdlib::Absolutepath, $executable)
+  assert_type(Stdlib::Absolutepath, $config_dir)
+  assert_type(Stdlib::Absolutepath, $systemd_service_folder)
+  assert_type(String, $user)
+  assert_type(String, $group)
+  assert_type(Array, $storage_aggregations)
+  assert_type(Array, $storage_schemas)
 
   include go_carbon::install
   include go_carbon::config

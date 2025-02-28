@@ -38,7 +38,7 @@ define go_carbon::service(
       }
     }
 
-    '7', '16.04', '20.04': {
+    '7', '16.04', '20.04', '24.04': {
       file { "${::go_carbon::systemd_service_folder}/${service_name}.service":
         ensure  => $go_carbon::ensure,
         mode    => '0644',

@@ -49,50 +49,53 @@ define go_carbon::instance(
 {
   include go_carbon
 
-  validate_absolute_path($log_file)
-  validate_re($log_level, [ '^debug', '^info', '^warn', '^warning', '^error' ],
-    "Invalid log level ${log_level}, Valid values: 'debug', 'info', 'warn', 'warning', 'error'")
-  validate_string($internal_graph_prefix)
-  validate_string($internal_metrics_interval)
-  validate_integer($max_cpu)
-  validate_absolute_path($whisper_data_dir)
-  validate_integer($whisper_workers)
-  validate_integer($whisper_max_updates_per_second)
-  validate_bool($whisper_enabled)
-  validate_integer($cache_max_size)
-  validate_string($cache_write_strategy)
-  validate_integer($go_maxprocs)
-  validate_bool($service_enable)
+  assert_type(Stdlib::Absolutepath, $log_file)
+  unless $log_level =~ /^(debug|info|warn|warning|error)$/ {
+    fail("Invalid log level '${log_level}'. Valid values: 'debug', 'info', 'warn', 'warning', 'error'.")
+  }
 
-  validate_re($udp_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
-    "Invalid udp listen ${udp_listen}. Must be {ip}:{port} or just :{port}")
+  assert_type(String, $internal_graph_prefix)
+  assert_type(String, $internal_metrics_interval)
+  assert_type(Integer, $max_cpu)
+  assert_type(Stdlib::Absolutepath, $whisper_data_dir)
+  assert_type(Integer, $whisper_workers)
+  assert_type(Integer, $whisper_max_updates_per_second)
+  assert_type(Boolean, $whisper_enabled)
+  assert_type(Integer, $cache_max_size)
+  assert_type(String, $cache_write_strategy)
+  assert_type(Integer, $go_maxprocs)
+  assert_type(Boolean, $service_enable)
 
-  validate_bool($udp_log_incomplete)
-  validate_bool($udp_enabled)
+  unless $udp_listen =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+$/ {
+    fail("Invalid udp listen '${udp_listen}'. Must be {ip}:{port} or just :{port}")
+  }
+  assert_type(Boolean, $udp_log_incomplete)
+  assert_type(Boolean, $udp_enabled)
   
-  validate_re($tcp_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
-    "Invalid tcp listen ${tcp_listen}. Must be {ip}:{port} or just :{port}")
+  unless $tcp_listen =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+$/ {
+    fail("Invalid udp listen '${tcp_listen}'. Must be {ip}:{port} or just :{port}")
+  }
 
-  validate_bool($tcp_enabled)
-  
-  validate_re($pickle_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
-    "Invalid pickle listen ${pickle_listen}. Must be {ip}:{port} or just :{port}")
+  assert_type(Boolean, $tcp_enabled)
+  unless $pickle_listen =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+$/ {
+    fail("Invalid pickle listen ${pickle_listen}. Must be {ip}:{port} or just :{port}")
+  }
 
-  validate_integer($pickle_max_message_size)
-  validate_bool($pickle_enabled)
-  
-  validate_re($carbonlink_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
-    "Invalid carbonlink listen ${carbonlink_listen}. Must be {ip}:{port} or just :{port}")
+  assert_type(Integer, $pickle_max_message_size)
+  assert_type(Boolean, $pickle_enabled)
+  unless $carbonlink_listen =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+$/ {
+    fail("Invalid carbonlink listen ${carbonlink_listen}. Must be {ip}:{port} or just :{port}")
+  }
 
-  validate_bool($carbonlink_enabled)
-  validate_string($carbonlink_read_timeout)
-  
-  validate_re($pprof_listen, '((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+',
-    "Invalid pprof listen ${pprof_listen}. Must be {ip}:{port} or just :{port}")
+  assert_type(Boolean, $carbonlink_enabled)
+  assert_type(String, $carbonlink_read_timeout)
+  unless $pprof_listen =~ /^((?:[0-9]{1,3}\.){3}[0-9]{1,3})?:\d+$/ {
+    fail("Invalid pprof listen ${pprof_listen}. Must be {ip}:{port} or just :{port}")
+  }
 
-  validate_bool($pprof_enabled)
-  validate_absolute_path($whisper_schemas_file)
-  validate_absolute_path($whisper_aggregation_file)
+  assert_type(Boolean, $pprof_enabled)
+  assert_type(Stdlib::Absolutepath, $whisper_schemas_file)
+  assert_type(Stdlib::Absolutepath, $whisper_aggregation_file)
 
   if $default_service {
     $service_title = 'go-carbon'
